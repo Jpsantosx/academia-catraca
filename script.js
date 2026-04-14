@@ -1,4 +1,3 @@
-
 const API_BASE_URL = 'https://projeto-academia-hazel.vercel.app'; 
 
 let cpfInput = "";
@@ -9,9 +8,6 @@ const stateInput = document.getElementById('state-input');
 const stateActive = document.getElementById('state-active');
 const stateBlocked = document.getElementById('state-blocked');
 
-/**
- * Gerencia a digitação no teclado numérico
- */
 function pressKey(num) {
     if (cpfInput.length < 11) {
         cpfInput += num;
@@ -29,7 +25,7 @@ function updateDisplay() {
 }
 
 /**
- * Consulta a API para verificar autorização
+ * Consulta a API utilizando a rota de busca por CPF específica
  */
 async function confirmCpf() {
     if (cpfInput.length < 11) {
@@ -38,29 +34,21 @@ async function confirmCpf() {
     }
 
     try {
-        // Busca todos os clientes (Rota aberta no seu app.py)
-        const resposta = await fetch(`${API_BASE_URL}/clientes`);
+        // Busca direta pelo CPF - Rota: /clientes/cpf/<cpf>
+        const resposta = await fetch(`${API_BASE_URL}/clientes/cpf/${cpfInput}`);
         
-        if (!resposta.ok) throw new Error("Erro ao conectar com o servidor");
-
-        const clientes = await resposta.json();
-
-        // Procura o cliente pelo CPF digitado
-        const clienteEncontrado = clientes.find(c => String(c.cpf) === cpfInput);
-
-        // Esconde a tela de input
         stateInput.classList.add('hidden');
 
-        if (clienteEncontrado) {
+        if (resposta.ok) {
+            const clienteEncontrado = await resposta.json();
+
             if (clienteEncontrado.autorizado) {
-                // Caso: Cliente cadastrado e com pagamento/acesso OK
                 mostrarSucesso(clienteEncontrado.nome);
             } else {
-                // Caso: Cliente cadastrado, mas "autorizado" está como False
                 stateBlocked.classList.remove('hidden');
             }
         } else {
-            // Caso: CPF não encontrado no banco de dados
+            // Se status for 404 ou outro erro, trata como acesso negado
             stateBlocked.classList.remove('hidden');
         }
 
@@ -71,19 +59,12 @@ async function confirmCpf() {
     }
 }
 
-/**
- * Exibe a mensagem de sucesso e o nome do aluno
- */
 function mostrarSucesso(nome) {
     stateActive.classList.remove('hidden');
-    // Opcional: Personalizar a mensagem com o nome do aluno
     const msgAtivo = stateActive.querySelector('p');
     msgAtivo.innerHTML = `Bom treino, <br><span class="text-white">${nome.split(' ')[0]}</span>!`;
 }
 
-/**
- * Reseta a interface para o próximo aluno
- */
 function resetTotem() {
     cpfInput = "";
     updateDisplay();
