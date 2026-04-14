@@ -5,125 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Check-in Titan Gym</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         .bg-gym-black { background-color: #0a0a0a; }
         .bg-gym-gold { background-color: #FFC107; }
-        .text-gym-gold { color: #FFC107; }
-        
-        /* Botões Quadrados com cantos mínimos */
-        .key-btn {
-            background-color: #1a1a1a;
-            color: white;
-            border: 1px solid #333;
-            transition: all 0.1s;
-            border-radius: 4px; /* Quase nada de arredondado */
-        }
-        .key-btn:active {
-            background-color: #FFC107;
-            color: black;
-            transform: scale(0.98);
-        }
+        .key-btn { background-color: #1a1a1a; color: white; border: 1px solid #333; border-radius: 4px; transition: all 0.1s; }
+        .key-btn:active { background-color: #FFC107; color: black; transform: scale(0.98); }
     </style>
 </head>
 <body class="bg-gym-black min-h-screen flex items-center justify-center p-2">
 
-    <div class="w-full max-w-sm bg-zinc-900 border-2 border-zinc-800 shadow-2xl overflow-hidden relative rounded-md">
-        
+    <div class="w-full max-w-sm bg-zinc-900 border-2 border-zinc-800 shadow-2xl overflow-hidden rounded-md">
         <div class="pt-6 pb-4 text-center border-b border-zinc-800">
-            <img src="ACADEMIA LOGO.png" alt="Logo" class="h-12 mx-auto mb-2 filter brightness-200">
             <h1 class="font-black text-xl uppercase italic tracking-tighter text-white">
                 Titan<span class="text-gym-gold">Gym</span>
             </h1>
         </div>
 
         <div class="p-6 min-h-[400px] flex flex-col justify-center">
-
             <div id="state-input" class="space-y-6">
-                <div class="text-center">
-                    <h2 class="text-gym-gold font-bold uppercase tracking-widest text-sm">Insira seu CPF</h2>
+                <div class="bg-black p-3 border border-zinc-700 text-center">
+                    <input type="text" id="cpf-display" readonly placeholder="CPF" class="bg-transparent text-white text-2xl font-mono text-center w-full outline-none">
                 </div>
-
-                <div class="bg-black p-3 border border-zinc-700 text-center rounded-sm">
-                    <input type="text" id="cpf-display" readonly placeholder="00000000000" 
-                        class="bg-transparent text-white text-2xl font-mono text-center w-full outline-none">
-                </div>
-
-                <div class="grid grid-cols-3 gap-2">
-                    <button onclick="pressKey('1')" class="key-btn py-3 text-xl font-bold">1</button>
-                    <button onclick="pressKey('2')" class="key-btn py-3 text-xl font-bold">2</button>
-                    <button onclick="pressKey('3')" class="key-btn py-3 text-xl font-bold">3</button>
-                    <button onclick="pressKey('4')" class="key-btn py-3 text-xl font-bold">4</button>
-                    <button onclick="pressKey('5')" class="key-btn py-3 text-xl font-bold">5</button>
-                    <button onclick="pressKey('6')" class="key-btn py-3 text-xl font-bold">6</button>
-                    <button onclick="pressKey('7')" class="key-btn py-3 text-xl font-bold">7</button>
-                    <button onclick="pressKey('8')" class="key-btn py-3 text-xl font-bold">8</button>
-                    <button onclick="pressKey('9')" class="key-btn py-3 text-xl font-bold">9</button>
-                    <button onclick="clearCpf()" class="key-btn py-3 text-xs font-black uppercase text-red-500">Limpar</button>
-                    <button onclick="pressKey('0')" class="key-btn py-3 text-xl font-bold">0</button>
-                    <button onclick="confirmCpf()" class="bg-gym-gold py-3 rounded-sm text-black text-xs font-black uppercase tracking-tighter hover:bg-yellow-500">Confirmar</button>
-                </div>
+                <div class="grid grid-cols-3 gap-2" id="teclado">
+                    </div>
             </div>
 
+            <div id="state-loading" class="hidden text-center text-gym-gold">Verificando...</div>
+
             <div id="state-active" class="hidden text-center space-y-4">
-                <div class="border-2 border-green-500 p-6 bg-zinc-800/50 rounded-sm">
-                    <h2 class="text-green-500 font-black text-3xl uppercase mb-1">Ativo</h2>
-                    <p class="text-white text-lg font-bold uppercase italic tracking-widest">Bom Treino!</p>
+                <div class="border-2 border-green-500 p-6 bg-zinc-800/50">
+                    <h2 class="text-green-500 font-black text-3xl uppercase">Ativo</h2>
+                    <p id="welcome-name" class="text-white uppercase italic"></p>
                 </div>
-                <button onclick="resetTotem()" class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Voltar</button>
+                <button onclick="resetTotem()" class="text-zinc-500 text-[10px] font-bold uppercase">Voltar</button>
             </div>
 
             <div id="state-blocked" class="hidden text-center space-y-4">
-                <div class="border-2 border-red-500 p-6 bg-zinc-800/50 rounded-sm">
-                    <h2 class="text-red-500 font-black text-2xl uppercase mb-1">Bloqueado</h2>
-                    <p class="text-white text-[11px] font-bold uppercase tracking-tighter leading-tight">Vá à recepção resolver o problema</p>
+                <div class="border-2 border-red-500 p-6 bg-zinc-800/50">
+                    <h2 id="error-title" class="text-red-500 font-black text-2xl uppercase">Bloqueado</h2>
+                    <p id="error-msg" class="text-white text-[11px] uppercase">Vá à recepção</p>
                 </div>
-                <button onclick="resetTotem()" class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Voltar</button>
+                <button onclick="resetTotem()" class="text-zinc-500 text-[10px] font-bold uppercase">Voltar</button>
             </div>
-
-        </div>
-
-        <div class="pb-4 text-center">
-            <p class="text-zinc-600 text-[9px] uppercase font-bold tracking-[0.2em]">Titan System &bull; Access</p>
         </div>
     </div>
-
-    <script>
-        let cpfInput = "";
-
-        function pressKey(num) {
-            if (cpfInput.length < 11) {
-                cpfInput += num;
-                updateDisplay();
-            }
-        }
-
-        function clearCpf() {
-            cpfInput = "";
-            updateDisplay();
-        }
-
-        function updateDisplay() {
-            document.getElementById('cpf-display').value = cpfInput;
-        }
-
-        function confirmCpf() {
-            if (cpfInput.length < 1) return;
-            document.getElementById('state-input').classList.add('hidden');
-            if (cpfInput.endsWith("0")) {
-                document.getElementById('state-blocked').classList.remove('hidden');
-            } else {
-                document.getElementById('state-active').classList.remove('hidden');
-            }
-        }
-
-        function resetTotem() {
-            cpfInput = "";
-            updateDisplay();
-            document.getElementById('state-active').classList.add('hidden');
-            document.getElementById('state-blocked').classList.add('hidden');
-            document.getElementById('state-input').classList.remove('hidden');
-        }
-    </script>
 </body>
 </html>
