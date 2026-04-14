@@ -1,41 +1,64 @@
-        const API_URL = "https://projeto-academia-hazel.vercel.app";
+        const API_BASE = "https://projeto-academia-hazel.vercel.app";
         let cpfInput = "";
 
-        // ... (pressKey e clearCpf permanecem iguais)
+        function pressKey(num) {
+            if (cpfInput.length < 11) {
+                cpfInput += num;
+                updateDisplay();
+            }
+        }
+
+        function clearCpf() {
+            cpfInput = "";
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('cpf-display').value = cpfInput;
+        }
 
         async function confirmCpf() {
             if (cpfInput.length < 1) return;
             
-            showState('loading');
+            const btn = document.getElementById('btn-confirm');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader"></span>';
 
             try {
-                const response = await fetch(`${API_URL}/clientes/${cpfInput}`);
-                if (!response.ok) throw new Error('Não encontrado');
+                const response = await fetch(`${API_BASE}/clientes/${cpfInput}`);
                 
+                if (!response.ok) {
+                    throw new Error('Não encontrado');
+                }
+
                 const data = await response.json();
                 
+                document.getElementById('state-input').classList.add('hidden');
+                
+                // Verifica se autorizado é true (booleano ou string)
                 if (data.autorizado === true || data.autorizado === "true") {
-                    document.getElementById('welcome-name').innerText = `Bom Treino, ${data.nome}!`;
-                    showState('active');
+                    document.getElementById('welcome-msg').innerText = `Bom Treino, ${data.nome.split(' ')[0]}!`;
+                    document.getElementById('state-active').classList.remove('hidden');
                 } else {
                     document.getElementById('error-title').innerText = "Bloqueado";
-                    showState('blocked');
+                    document.getElementById('error-desc').innerText = "Vá à recepção resolver o problema";
+                    document.getElementById('state-blocked').classList.remove('hidden');
                 }
-            } catch (err) {
-                document.getElementById('error-title').innerText = "Erro";
-                document.getElementById('error-msg').innerText = "CPF não cadastrado ou erro de conexão";
-                showState('blocked');
+            } catch (error) {
+                document.getElementById('state-input').classList.add('hidden');
+                document.getElementById('error-title').innerText = "Não Encontrado";
+                document.getElementById('error-desc').innerText = "CPF não cadastrado no sistema";
+                document.getElementById('state-blocked').classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Confirmar";
             }
-        }
-
-        function showState(state) {
-            ['input', 'active', 'blocked', 'loading'].forEach(s => 
-                document.getElementById(`state-${s}`).classList.add('hidden'));
-            document.getElementById(`state-${state}`).classList.remove('hidden');
         }
 
         function resetTotem() {
             cpfInput = "";
-            document.getElementById('cpf-display').value = "";
-            showState('input');
+            updateDisplay();
+            document.getElementById('state-active').classList.add('hidden');
+            document.getElementById('state-blocked').classList.add('hidden');
+            document.getElementById('state-input').classList.remove('hidden');
         }
