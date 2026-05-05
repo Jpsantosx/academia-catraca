@@ -23,8 +23,10 @@ async function confirmCpf() {
 
     try {
         const res = await fetch(API + "/clientes");
-        const clientes = await res.json();
+        
+        if (!res.ok) throw new Error("Erro no servidor");
 
+        const clientes = await res.json();
         const cliente = clientes.find(c => c.cpf === cpf);
 
         if (!cliente) {
@@ -36,7 +38,7 @@ async function confirmCpf() {
         }
 
     } catch (e) {
-        showBlocked("Erro", "Sistema indisponível");
+        showConnectionError();
     }
 
     document.getElementById("btn-confirm").innerHTML = "Confirmar";
@@ -73,11 +75,18 @@ function showBlocked(title, desc) {
     }, 100);
 }
 
+function showConnectionError() {
+    document.getElementById("state-input").classList.add("hidden");
+    document.getElementById("state-error").classList.remove("hidden");
+}
+
 function resetTotem() {
     cpf = "";
     document.getElementById("cpf-display").value = "";
 
+    // Esconde todos os estados de resposta
     document.getElementById("state-input").classList.remove("hidden");
     document.getElementById("state-active").classList.add("hidden");
     document.getElementById("state-blocked").classList.add("hidden");
+    document.getElementById("state-error").classList.add("hidden"); // Adicionado
 }
