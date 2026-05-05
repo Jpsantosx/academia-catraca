@@ -80,4 +80,4 @@ function resetTotem() {
     document.getElementById("state-input").classList.remove("hidden");
     document.getElementById("state-active").classList.add("hidden");
     document.getElementById("state-blocked").classList.add("hidden");
-} 
+}
