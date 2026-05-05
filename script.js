@@ -56,6 +56,21 @@ function showBlocked(title, desc) {
 
     document.getElementById("error-title").innerText = title;
     document.getElementById("error-desc").innerText = desc;
+
+    const progressBar = document.getElementById("error-progress");
+    let porcentagem = 100;
+
+    progressBar.style.width = "100%";
+
+    const timer = setInterval(() => {
+        porcentagem -= 2;
+        progressBar.style.width = porcentagem + "%";
+
+        if (porcentagem <= 0) {
+            clearInterval(timer);
+            resetTotem();
+        }
+    }, 100);
 }
 
 function resetTotem() {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        .bg-gym-black { background-color: #0a0a0a; }
-        .bg-gym-gold { background-color: #FFC107; }
-        .text-gym-gold { color: #FFC107; }
+        .bg-gym-black {
+            background-color: #0a0a0a;
+        }
+
+        .bg-gym-gold {
+            background-color: #FFC107;
+        }
+
+        .text-gym-gold {
+            color: #FFC107;
+        }
+
         .key-btn {
             background-color: #1a1a1a;
             color: white;
@@ -17,11 +27,13 @@
             transition: all 0.1s;
             border-radius: 4px;
         }
+
         .key-btn:active {
             background-color: #FFC107;
             color: black;
             transform: scale(0.98);
         }
+
         .loader {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #FFC107;
@@ -31,13 +43,23 @@
             animation: spin 1s linear infinite;
             display: inline-block;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
+
 <body class="bg-gym-black min-h-screen flex items-center justify-center p-2">
 
     <div class="w-full max-w-sm bg-zinc-900 border-2 border-zinc-800 shadow-2xl overflow-hidden relative rounded-md">
-        
+
         <div class="pt-6 pb-4 text-center border-b border-zinc-800">
             <h1 class="font-black text-xl uppercase italic tracking-tighter text-white">
                 Titan<span class="text-gym-gold">Gym</span>
@@ -52,7 +74,7 @@
                 </div>
 
                 <div class="bg-black p-3 border border-zinc-700 text-center rounded-sm">
-                    <input type="text" id="cpf-display" readonly placeholder="00000000000" 
+                    <input type="text" id="cpf-display" readonly placeholder="00000000000"
                         class="bg-transparent text-white text-2xl font-mono text-center w-full outline-none">
                 </div>
 
@@ -66,26 +88,48 @@
                     <button onclick="pressKey('7')" class="key-btn py-3 text-xl font-bold">7</button>
                     <button onclick="pressKey('8')" class="key-btn py-3 text-xl font-bold">8</button>
                     <button onclick="pressKey('9')" class="key-btn py-3 text-xl font-bold">9</button>
-                    <button onclick="clearCpf()" class="key-btn py-3 text-xs font-black uppercase text-red-500">Limpar</button>
+                    <button onclick="clearCpf()"
+                        class="key-btn py-3 text-xs font-black uppercase text-red-500">Limpar</button>
                     <button onclick="pressKey('0')" class="key-btn py-3 text-xl font-bold">0</button>
-                    <button id="btn-confirm" onclick="confirmCpf()" class="bg-gym-gold py-3 rounded-sm text-black text-xs font-black uppercase tracking-tighter hover:bg-yellow-500">Confirmar</button>
+                    <button id="btn-confirm" onclick="confirmCpf()"
+                        class="bg-gym-gold py-3 rounded-sm text-black text-xs font-black uppercase tracking-tighter hover:bg-yellow-500">Confirmar</button>
                 </div>
             </div>
 
             <div id="state-active" class="hidden text-center space-y-4">
                 <div class="border-2 border-green-500 p-6 bg-zinc-800/50 rounded-sm">
                     <h2 class="text-green-500 font-black text-3xl uppercase mb-1">Ativo</h2>
-                    <p id="welcome-msg" class="text-white text-lg font-bold uppercase italic tracking-widest">Bom Treino!</p>
+                    <p id="welcome-msg" class="text-white text-lg font-bold uppercase italic tracking-widest">Bom
+                        Treino!</p>
                 </div>
-                <button onclick="resetTotem()" class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Voltar</button>
+                <button onclick="resetTotem()"
+                    class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Voltar</button>
             </div>
 
             <div id="state-blocked" class="hidden text-center space-y-4">
                 <div class="border-2 border-red-500 p-6 bg-zinc-800/50 rounded-sm">
                     <h2 id="error-title" class="text-red-500 font-black text-2xl uppercase mb-1">Bloqueado</h2>
-                    <p id="error-desc" class="text-white text-[11px] font-bold uppercase tracking-tighter leading-tight">Vá à recepção resolver o problema</p>
+                    <p id="error-desc"
+                        class="text-white text-[11px] font-bold uppercase tracking-tighter leading-tight">Vá à recepção
+                        resolver o problema</p>
                 </div>
-                <button onclick="resetTotem()" class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Voltar</button>
+                <div id="state-blocked" class="hidden text-center space-y-4">
+                    <div class="border-2 border-red-500 p-6 bg-zinc-800/50 rounded-sm">
+                        <h2 id="error-title" class="text-red-500 font-black text-2xl uppercase mb-1">Bloqueado</h2>
+                        <p id="error-desc"
+                            class="text-white text-[11px] font-bold uppercase tracking-tighter leading-tight">Vá à
+                            recepção resolver o problema</p>
+
+                        <div class="w-full bg-zinc-800 h-1 mt-4 rounded-full overflow-hidden">
+                            <div id="error-progress"
+                                class="bg-red-500 h-full w-full transition-all duration-100 ease-linear"></div>
+                        </div>
+                    </div>
+                    <button onclick="resetTotem()"
+                        class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Voltar</button>
+                </div>
+                <button onclick="resetTotem()"
+                    class="text-zinc-500 uppercase text-[10px] font-bold tracking-widest">Voltar</button>
             </div>
 
         </div>
@@ -96,4 +140,5 @@
     </div>
 </body>
 <script src="script.js"></script>
+
 </html>
