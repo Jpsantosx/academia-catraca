@@ -57,3 +57,11 @@ Desenvolvido por João Pedro Stadler e Felipe Barros Souza
 
 Licença
 Este projeto está sob a licença MIT. Sinta-se livre para usar, modificar e distribuir.
+
+---
+
+## Autor
+
+Desenvolvido por **João Pedro Stadler**.
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-João_Pedro_Stadler-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/jo%C3%A3o-pedro-stadler-6ab4583b6/)
